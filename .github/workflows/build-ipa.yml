@@ -36,7 +36,7 @@ jobs:
           set -euo pipefail
           xcodebuild \
             -project ThreeOneOSFive.xcodeproj \
-            -target vitamods \
+            -target roboios \
             -configuration Release \
             -sdk iphoneos \
             -xcconfig VitaLicensing.xcconfig \
@@ -46,17 +46,17 @@ jobs:
             build 2>&1 | tee build.log
 
       - name: Verify iOS 16 observation metadata in release executable
-        run: node checks/native/check-reflection.mjs build/Release-iphoneos/vitamods.app/vitamods
+        run: node checks/native/check-reflection.mjs build/Release-iphoneos/roboios.app/roboios
 
       - name: Package unsigned IPA
         shell: bash
         run: |
           set -euo pipefail
-          app="$PWD/build/Release-iphoneos/vitamods.app"
+          app="$PWD/build/Release-iphoneos/roboios.app"
           test -d "$app"
-          test -f "$app/vitamods"
+          test -f "$app/roboios"
           mkdir -p output/Payload
-          ditto "$app" output/Payload/vitamods.app
+          ditto "$app" output/Payload/roboios.app
           cd output
           zip -qry roboios-unsigned.ipa Payload
           unzip -t roboios-unsigned.ipa
