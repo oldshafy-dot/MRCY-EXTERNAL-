@@ -110,6 +110,7 @@ final class ContentUpdateController: ObservableObject {
         do {
             try await session.requireOperationLease()
             guard let envelope = try await session.fetchLatestManifest() else {
+                clearLocalFunctions(store)
                 setRequiredRelease(nil)
                 hasVerifiedPolicy = true
                 return
@@ -150,6 +151,15 @@ final class ContentUpdateController: ObservableObject {
             lastCheckAt = nil
             errorMessage = error.localizedDescription
         }
+    }
+
+    private func clearLocalFunctions(_ store: PatchProjectStore) {
+        let items = (try? PatchProjectLibrary.loadAvailable()) ?? []
+        for item in items where DevicePatchService.latestReceipt(projectID: item.id) == nil {
+            try? PatchProjectLibrary.delete(item)
+            ContentFunctionMetadataStore.remove(item.id)
+        }
+        store.reload()
     }
 
     func installRequired(
