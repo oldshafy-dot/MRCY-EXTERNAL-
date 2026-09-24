@@ -442,11 +442,13 @@ struct VitaLiquidTabBar: View {
                 tabButton(tab)
             }
         }
-        .padding(.horizontal, 10)
+        .padding(.horizontal, 6)
         .padding(.vertical, 6)
         .frame(height: 62)
         .frame(maxWidth: 360)
         .background { glassCapsule }
+        .clipShape(Capsule())
+        .shadow(color: .black.opacity(0.6), radius: 20, y: 10)
         .frame(maxWidth: .infinity)
     }
 
@@ -457,7 +459,6 @@ struct VitaLiquidTabBar: View {
                 Capsule()
                     .strokeBorder(AppTheme.hairline, lineWidth: 0.5)
             }
-            .shadow(color: .black.opacity(0.6), radius: 20, y: 10)
     }
 
     private func tabButton(_ tab: VitaTab) -> some View {
@@ -479,13 +480,16 @@ struct VitaLiquidTabBar: View {
                 if selected {
                     Text(tab.title)
                         .font(.system(size: 12, weight: .bold))
-                        .transition(.opacity.combined(with: .move(edge: .leading)))
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .transition(.opacity)
                 }
             }
             .foregroundStyle(selected ? Color.white : AppTheme.secondaryText)
-            .padding(.horizontal, selected ? 16 : 0)
+            .padding(.horizontal, selected ? 14 : 0)
             .padding(.vertical, 10)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(maxWidth: selected ? nil : .infinity, maxHeight: .infinity)
+            .fixedSize(horizontal: selected, vertical: false)
             .background {
                 if selected {
                     Capsule()
@@ -495,6 +499,7 @@ struct VitaLiquidTabBar: View {
             }
         }
         .buttonStyle(.plain)
+        .layoutPriority(selected ? 1 : 0)
         .accessibilityLabel(tab.title)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
