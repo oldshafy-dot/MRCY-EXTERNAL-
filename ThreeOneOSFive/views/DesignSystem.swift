@@ -278,7 +278,7 @@ enum VitaTab: Int, CaseIterable, Hashable {
 
     var selectedIcon: String {
         switch self {
-        case .home: return "slider.horizontal.3.fill"
+        case .home: return "slider.horizontal.3"
         case .info: return "person.crop.circle.fill"
         }
     }
@@ -473,19 +473,16 @@ struct VitaLiquidTabBar: View {
                 Image(systemName: selected ? tab.selectedIcon : tab.icon)
                     .font(.system(size: 14, weight: .semibold))
                     .symbolRenderingMode(.monochrome)
-                if selected {
-                    Text(tab.title)
-                        .font(.system(size: 12, weight: .bold))
-                        .lineLimit(1)
-                        .fixedSize(horizontal: true, vertical: false)
-                        .transition(.opacity)
-                }
+                    .frame(width: 18, height: 18)
+                Text(tab.title)
+                    .font(.system(size: 12, weight: .bold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
             .foregroundStyle(selected ? Color.white : AppTheme.secondaryText)
-            .padding(.horizontal, selected ? 14 : 0)
+            .padding(.horizontal, 14)
             .padding(.vertical, 10)
-            .frame(maxWidth: selected ? nil : .infinity, maxHeight: .infinity)
-            .fixedSize(horizontal: selected, vertical: false)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background {
                 if selected {
                     Capsule()
@@ -493,9 +490,10 @@ struct VitaLiquidTabBar: View {
                         .matchedGeometryEffect(id: "selected-tab", in: selectedTab)
                 }
             }
+            .contentShape(Capsule())
         }
         .buttonStyle(.plain)
-        .layoutPriority(selected ? 1 : 0)
+        .frame(maxWidth: .infinity)
         .accessibilityLabel(tab.title)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
