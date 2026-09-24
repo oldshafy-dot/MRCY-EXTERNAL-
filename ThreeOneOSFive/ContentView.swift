@@ -133,26 +133,121 @@ struct ContentView: View {
     }
 
     private var homeGamesPage: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            titleWordmark
-                .padding(.top, 6)
-
-            VitaBannerVideo(isPlaying: tab == .home && selectedGame == nil)
-                .equatable()
-                .frame(maxWidth: .infinity)
-                .frame(height: 148)
-                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+        VStack(alignment: .leading, spacing: 20) {
+            // New Banner Design
+            ZStack(alignment: .bottomLeading) {
+                // Background Image/Gradient placeholder
+                LinearGradient(
+                    colors: [Color(red: 0.1, green: 0.2, blue: 0.4), Color(red: 0.05, green: 0.1, blue: 0.2)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                
+                // "LIVE" Badge
+                VStack {
+                    HStack {
+                        HStack(spacing: 6) {
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 6, height: 6)
+                            Text("LIVE")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundStyle(Color.white)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.blue.opacity(0.8))
+                        .clipShape(Capsule())
+                        Spacer()
+                    }
+                    .padding(.top, 16)
+                    .padding(.leading, 16)
+                    Spacer()
                 }
-                .accessibilityLabel("ROBO iOS")
-                .id("vita-home-banner")
-                .transaction { $0.animation = nil }
 
-            VStack(spacing: 14) {
+                // Text Content
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("ROBOT EXTERNAL")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(Color.white)
+                    Text("PLAY SMARTER")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.white.opacity(0.7))
+                }
+                .padding(.bottom, 20)
+                .padding(.leading, 16)
+            }
+            .frame(height: 180)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+
+            // Game Selector (Pill Buttons)
+            HStack(spacing: 12) {
                 ForEach(VitaGame.allCases) { game in
-                    gameRow(game)
+                    Button {
+                        selectedGame = game
+                    } label: {
+                        Text(game.title)
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(selectedGame == game ? Color.white : AppTheme.secondaryText)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(
+                                Group {
+                                    if selectedGame == game {
+                                        LinearGradient(
+                                            colors: [Color.blue, Color.blue.opacity(0.8)],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    } else {
+                                        AppTheme.card
+                                    }
+                                }
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            // Function Section Header
+            Text("FUNCTION")
+                .font(.system(size: 13, weight: .bold))
+                .tracking(1.0)
+                .foregroundStyle(AppTheme.accent)
+                .padding(.top, 8)
+
+            // Function List
+            if let game = selectedGame {
+                if items(for: game).isEmpty {
+                    HStack(spacing: 12) {
+                        Image(systemName: "slider.horizontal.3")
+                            .foregroundStyle(AppTheme.secondaryText)
+                        Text(busy ? "Checking for updates…" : "No functions yet. They will appear after an update.")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(AppTheme.primaryText)
+                        Spacer()
+                        if busy {
+                            ProgressView()
+                                .tint(AppTheme.accent)
+                        }
+                    }
+                    .padding(.vertical, 20)
+                } else {
+                    VStack(spacing: 12) {
+                        ForEach(items(for: game)) { item in
+                            functionRow(item)
+                        }
+                    }
+                }
+            } else {
+                // Default to first game if none selected, or show prompt
+                if let firstGame = VitaGame.allCases.first {
+                    VStack(spacing: 12) {
+                        ForEach(items(for: firstGame)) { item in
+                            functionRow(item)
+                        }
+                    }
                 }
             }
         }
@@ -270,28 +365,28 @@ struct ContentView: View {
 
         return HStack(spacing: 14) {
             ZStack {
-                Circle()
-                    .fill(AppTheme.accent.opacity(0.12))
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(AppTheme.accent.opacity(0.15))
                 Image(systemName: glyph)
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(AppTheme.accent)
             }
-            .frame(width: 36, height: 36)
+            .frame(width: 40, height: 40)
             .accessibilityHidden(true)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(name)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(Color.white)
                 if !description.isEmpty {
                     Text(description)
-                        .font(.system(size: 13))
+                        .font(.system(size: 12))
                         .foregroundStyle(AppTheme.secondaryText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 if waiting {
                     Text("Preparing device…")
-                        .font(.system(size: 12))
+                        .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(AppTheme.accent)
                 }
             }
@@ -312,8 +407,10 @@ struct ContentView: View {
                     || waiting
             )
         }
-        .padding(.vertical, 10)
-        .frame(minHeight: 56)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(AppTheme.card)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(name)
         .accessibilityValue(open ? "Open" : "Closed")

@@ -301,7 +301,7 @@ final class AccessChannel {
 
     private func perform(_ request: URLRequest) async throws -> (Data, URLResponse) {
         var outgoing = request
-        outgoing.setValue("vita", forHTTPHeaderField: "x-vita-product")
+        outgoing.setValue("robo", forHTTPHeaderField: "x-vita-product")
         let box = LicenseSessionBox(
             baseURL: configuration.serverBaseURL,
             pins: configuration.tlsPins

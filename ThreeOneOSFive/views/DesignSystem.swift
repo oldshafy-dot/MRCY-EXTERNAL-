@@ -3,18 +3,21 @@ import SwiftUI
 import UIKit
 
 enum AppTheme {
-    static let accent = Color(red: 0.00, green: 0.72, blue: 1.00)
-    static let pageBackground = Color.black
-    static let consoleBackground = Color(red: 32 / 255, green: 32 / 255, blue: 32 / 255)
-    static let card = Color(red: 28 / 255, green: 28 / 255, blue: 30 / 255)
+    // New Design Palette based on uploaded image
+    static let accent = Color(red: 0.15, green: 0.55, blue: 1.00) // Bright Blue
+    static let pageBackground = Color(red: 0.03, green: 0.05, blue: 0.10) // Very Dark Blue/Black
+    static let consoleBackground = Color(red: 0.08, green: 0.10, blue: 0.15)
+    static let card = Color(red: 0.08, green: 0.11, blue: 0.18) // Dark Blue-Grey Card
+    static let cardSelected = Color(red: 0.15, green: 0.55, blue: 1.00) // Active Blue
     static let primaryText = Color.white
-    static let secondaryText = Color(red: 152 / 255, green: 152 / 255, blue: 157 / 255)
-    static let tertiaryText = Color(red: 99 / 255, green: 99 / 255, blue: 102 / 255)
-    static let hairline = Color(red: 44 / 255, green: 44 / 255, blue: 46 / 255)
-    static let pagePadding: CGFloat = 16
-    static let sectionSpacing: CGFloat = 16
-    static let rowPadding: CGFloat = 14
-    static let pageInset: CGFloat = 16
+    static let secondaryText = Color(red: 0.60, green: 0.65, blue: 0.75)
+    static let tertiaryText = Color(red: 0.40, green: 0.45, blue: 0.55)
+    static let hairline = Color.white.opacity(0.05)
+    
+    static let pagePadding: CGFloat = 20
+    static let sectionSpacing: CGFloat = 24
+    static let rowPadding: CGFloat = 16
+    static let pageInset: CGFloat = 20
     static let rowIconSize: CGFloat = 17
     static let rowIconFrame: CGFloat = 28
     static let fileRowIconSize: CGFloat = 17
@@ -23,7 +26,7 @@ enum AppTheme {
     static let appIconSize: CGFloat = 32
     static let emptyIconSize: CGFloat = 30
     static let selectionIconSize: CGFloat = 18
-    static let contentCardCornerRadius: CGFloat = 20
+    static let contentCardCornerRadius: CGFloat = 16
     static let contentCardInset: CGFloat = 16
     static let contentCardPadding: CGFloat = 16
 }
@@ -262,25 +265,25 @@ enum VitaTab: Int, CaseIterable, Hashable {
 
     var title: String {
         switch self {
-        case .home: return "Home"
-        case .profile: return "Profile"
-        case .info: return "Info"
+        case .home: return "Function"
+        case .profile: return "Skin"
+        case .info: return "Account"
         }
     }
 
     var icon: String {
         switch self {
-        case .home: return "house"
-        case .profile: return "person"
-        case .info: return "info.circle"
+        case .home: return "slider.horizontal.3"
+        case .profile: return "paintpalette"
+        case .info: return "person.crop.circle"
         }
     }
 
     var selectedIcon: String {
         switch self {
-        case .home: return "house.fill"
-        case .profile: return "person.fill"
-        case .info: return "info.circle.fill"
+        case .home: return "slider.horizontal.3.fill"
+        case .profile: return "paintpalette.fill"
+        case .info: return "person.crop.circle.fill"
         }
     }
 }
@@ -449,12 +452,12 @@ struct VitaLiquidTabBar: View {
 
     private var glassCapsule: some View {
         Capsule()
-            .fill(Color(red: 0.09, green: 0.09, blue: 0.10))
+            .fill(AppTheme.pageBackground.opacity(0.95))
             .overlay {
                 Capsule()
-                    .strokeBorder(Color.white.opacity(0.06), lineWidth: 0.5)
+                    .strokeBorder(AppTheme.hairline, lineWidth: 0.5)
             }
-            .shadow(color: .black.opacity(0.45), radius: 18, y: 8)
+            .shadow(color: .black.opacity(0.6), radius: 20, y: 10)
     }
 
     private func tabButton(_ tab: VitaTab) -> some View {
@@ -469,19 +472,24 @@ struct VitaLiquidTabBar: View {
                 selection = tab
             }
         } label: {
-            VStack(spacing: 2) {
+            HStack(spacing: 6) {
                 Image(systemName: selected ? tab.selectedIcon : tab.icon)
-                    .font(.system(size: 17, weight: .medium))
+                    .font(.system(size: 14, weight: .semibold))
                     .symbolRenderingMode(.monochrome)
-                Text(tab.title)
-                    .font(.system(size: 10, weight: .semibold))
+                if selected {
+                    Text(tab.title)
+                        .font(.system(size: 12, weight: .bold))
+                        .transition(.opacity.combined(with: .move(edge: .leading)))
+                }
             }
-            .foregroundStyle(selected ? AppTheme.accent : AppTheme.secondaryText)
+            .foregroundStyle(selected ? Color.white : AppTheme.secondaryText)
+            .padding(.horizontal, selected ? 16 : 0)
+            .padding(.vertical, 10)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background {
                 if selected {
                     Capsule()
-                        .fill(Color.white.opacity(0.04))
+                        .fill(AppTheme.accent)
                         .matchedGeometryEffect(id: "selected-tab", in: selectedTab)
                 }
             }
