@@ -260,13 +260,11 @@ struct GameIcon: View {
 
 enum VitaTab: Int, CaseIterable, Hashable {
     case home
-    case profile
     case info
 
     var title: String {
         switch self {
         case .home: return "Function"
-        case .profile: return "Skin"
         case .info: return "Account"
         }
     }
@@ -274,7 +272,6 @@ enum VitaTab: Int, CaseIterable, Hashable {
     var icon: String {
         switch self {
         case .home: return "slider.horizontal.3"
-        case .profile: return "paintpalette"
         case .info: return "person.crop.circle"
         }
     }
@@ -282,7 +279,6 @@ enum VitaTab: Int, CaseIterable, Hashable {
     var selectedIcon: String {
         switch self {
         case .home: return "slider.horizontal.3.fill"
-        case .profile: return "paintpalette.fill"
         case .info: return "person.crop.circle.fill"
         }
     }

@@ -44,11 +44,6 @@ struct ContentView: View {
                 .accessibilityHidden(tab != .home)
                 .transaction { $0.animation = nil }
 
-            pageScroll(skinPage)
-                .opacity(tab == .profile ? 1 : 0)
-                .allowsHitTesting(tab == .profile)
-                .accessibilityHidden(tab != .profile)
-
             pageScroll(profilePage)
                 .opacity(tab == .info ? 1 : 0)
                 .allowsHitTesting(tab == .info)
@@ -127,81 +122,16 @@ struct ContentView: View {
                 .tracking(1.0)
                 .foregroundStyle(AppTheme.accent)
                 .padding(.top, 8)
-            functionList(items(for: selectedGame).filter { !isSkin($0) })
-        }
-    }
-
-    private var skinPage: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            gameSelector
-            let skins = items(for: selectedGame).filter(isSkin)
-            if skins.isEmpty {
-                functionList([], empty: "No skins yet. They will appear after an update.")
-            } else {
-                ForEach(skinSections(skins), id: \.title) { section in
-                    Text(section.title.uppercased())
-                        .font(.system(size: 13, weight: .bold))
-                        .tracking(1.0)
-                        .foregroundStyle(AppTheme.accent)
-                    LazyVGrid(
-                        columns: [
-                            GridItem(.flexible(), spacing: 12),
-                            GridItem(.flexible(), spacing: 12),
-                        ],
-                        spacing: 12
-                    ) {
-                        ForEach(section.items) { item in
-                            skinCard(item)
-                        }
-                    }
-                }
-            }
+            functionList(items(for: selectedGame))
         }
     }
 
     private var banner: some View {
-        ZStack(alignment: .bottomLeading) {
-            VitaBannerVideo(isPlaying: tab == .home)
-                .frame(maxWidth: .infinity)
-                .frame(height: 180)
-            LinearGradient(
-                colors: [Color.black.opacity(0.05), Color.black.opacity(0.45)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            VStack {
-                HStack {
-                    HStack(spacing: 6) {
-                        Circle()
-                            .fill(Color.white)
-                            .frame(width: 6, height: 6)
-                        Text("LIVE")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(Color.white)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.blue.opacity(0.8))
-                    .clipShape(Capsule())
-                    Spacer()
-                }
-                .padding(.top, 16)
-                .padding(.leading, 16)
-                Spacer()
-            }
-            VStack(alignment: .leading, spacing: 4) {
-                Text("ROBOT EXTERNAL")
-                    .font(.system(size: 24, weight: .bold))
-                    .foregroundStyle(Color.white)
-                Text("PLAY SMARTER")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(Color.white.opacity(0.7))
-            }
-            .padding(.bottom, 20)
-            .padding(.leading, 16)
-        }
-        .frame(height: 180)
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        VitaBannerVideo(isPlaying: tab == .home)
+            .frame(maxWidth: .infinity)
+            .frame(height: 180)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .accessibilityLabel("ROBO banner")
     }
 
     private var gameSelector: some View {

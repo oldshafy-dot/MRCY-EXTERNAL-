@@ -94,8 +94,13 @@ private struct AppLaunchLoadingView: View {
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            VStack(spacing: 28) {
-                wordmark
+            VStack(spacing: 0) {
+                Text("ROBO EXTERNAL")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundStyle(Color.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 28)
+                Spacer()
                 VStack(spacing: 14) {
                     ProgressView()
                         .tint(AppTheme.accent)
@@ -104,15 +109,12 @@ private struct AppLaunchLoadingView: View {
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(Color.white)
                 }
+                Spacer()
             }
             .padding(.horizontal, 36)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Loading")
-    }
-
-    private var wordmark: some View {
-        VitaTitleWordmark(maxWidth: 240)
     }
 }
 
@@ -153,27 +155,11 @@ struct LicenseActivationView: View {
     }
 
     private var header: some View {
-        VStack(spacing: 14) {
-            AppLogo(size: 78)
-                .shadow(color: AppTheme.accent.opacity(0.45), radius: 22, y: 0)
-                .padding(.bottom, 18)
-
-            Text("ACTIVATION")
-                .font(.system(size: 11, weight: .semibold))
-                .tracking(2.2)
-                .foregroundStyle(AppTheme.tertiaryText)
-
-            (Text("Vita Mod ") + Text("Vip").foregroundColor(AppTheme.accent))
-                .font(.system(size: 36, weight: .bold))
-                .foregroundStyle(Color.white)
-
-            Text("Enter your license key to activate this device.")
-                .font(.system(size: 15))
-                .foregroundStyle(AppTheme.secondaryText)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .accessibilityElement(children: .combine)
+        (Text("ROBO ") + Text("iOS").foregroundColor(AppTheme.accent))
+            .font(.system(size: 36, weight: .bold))
+            .foregroundStyle(Color.white)
+            .frame(maxWidth: .infinity)
+            .accessibilityLabel("ROBO iOS")
     }
 
     private var form: some View {
@@ -355,7 +341,9 @@ struct RequiredContentUpdateView: View {
                 ScrollView {
                     VStack(spacing: 36) {
                         Spacer(minLength: 48)
-                        VitaTitleWordmark(maxWidth: 260)
+                        Text("ROBO EXTERNAL")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundStyle(Color.white)
                         releaseNotes
                         if let error = updates.errorMessage {
                             Text(error)
