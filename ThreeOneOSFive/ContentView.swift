@@ -10,7 +10,7 @@ struct ContentView: View {
     @Environment(\.openURL) private var openURL
     @StateObject private var controller = VitaPatchController()
     @State private var tab: VitaTab = .home
-    @State private var selectedGame: VitaGame?
+    @State private var selectedGame: VitaGame = .freeFire
     @State private var pendingPatchID: UUID?
     @State private var pendingOpen: Bool?
 
@@ -39,34 +39,25 @@ struct ContentView: View {
             AppTheme.pageBackground.ignoresSafeArea()
 
             pageScroll(homeGamesPage)
-                .opacity(tab == .home && selectedGame == nil ? 1 : 0)
-                .allowsHitTesting(tab == .home && selectedGame == nil)
-                .accessibilityHidden(tab != .home || selectedGame != nil)
+                .opacity(tab == .home ? 1 : 0)
+                .allowsHitTesting(tab == .home)
+                .accessibilityHidden(tab != .home)
                 .transaction { $0.animation = nil }
 
-            if let game = selectedGame {
-                pageScroll(gameFunctionsPage(game))
-                    .opacity(tab == .home ? 1 : 0)
-                    .allowsHitTesting(tab == .home)
-                    .accessibilityHidden(tab != .home)
-            }
-
-            pageScroll(profilePage)
+            pageScroll(skinPage)
                 .opacity(tab == .profile ? 1 : 0)
                 .allowsHitTesting(tab == .profile)
                 .accessibilityHidden(tab != .profile)
 
-            pageScroll(infoPage)
+            pageScroll(profilePage)
                 .opacity(tab == .info ? 1 : 0)
                 .allowsHitTesting(tab == .info)
                 .accessibilityHidden(tab != .info)
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            if selectedGame == nil {
-                VitaLiquidTabBar(selection: $tab)
-                    .padding(.top, 6)
-                    .padding(.bottom, 4)
-            }
+            VitaLiquidTabBar(selection: $tab)
+                .padding(.top, 6)
+                .padding(.bottom, 4)
         }
         .tint(AppTheme.accent)
         .preferredColorScheme(.dark)
@@ -100,11 +91,6 @@ struct ContentView: View {
         .onDisappear {
             VitaBackgroundMusic.setPlaying(false)
         }
-        .onChange(of: tab) { value in
-            if value != .home {
-                selectedGame = nil
-            }
-        }
         .onChange(of: store.isBusy) { value in
             if !value {
                 controller.refresh(items: items)
@@ -134,118 +120,38 @@ struct ContentView: View {
 
     private var homeGamesPage: some View {
         VStack(alignment: .leading, spacing: 20) {
-            // New Banner Design
-            ZStack(alignment: .bottomLeading) {
-                // Background Image/Gradient placeholder
-                LinearGradient(
-                    colors: [Color(red: 0.1, green: 0.2, blue: 0.4), Color(red: 0.05, green: 0.1, blue: 0.2)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                
-                // "LIVE" Badge
-                VStack {
-                    HStack {
-                        HStack(spacing: 6) {
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 6, height: 6)
-                            Text("LIVE")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundStyle(Color.white)
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(Color.blue.opacity(0.8))
-                        .clipShape(Capsule())
-                        Spacer()
-                    }
-                    .padding(.top, 16)
-                    .padding(.leading, 16)
-                    Spacer()
-                }
-
-                // Text Content
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("ROBOT EXTERNAL")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(Color.white)
-                    Text("PLAY SMARTER")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.white.opacity(0.7))
-                }
-                .padding(.bottom, 20)
-                .padding(.leading, 16)
-            }
-            .frame(height: 180)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-
-            // Game Selector (Pill Buttons)
-            HStack(spacing: 12) {
-                ForEach(VitaGame.allCases) { game in
-                    Button {
-                        selectedGame = game
-                    } label: {
-                        Text(game.title)
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundStyle(selectedGame == game ? Color.white : AppTheme.secondaryText)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(
-                                Group {
-                                    if selectedGame == game {
-                                        LinearGradient(
-                                            colors: [Color.blue, Color.blue.opacity(0.8)],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                    } else {
-                                        AppTheme.card
-                                    }
-                                }
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-
-            // Function Section Header
+            banner
+            gameSelector
             Text("FUNCTION")
                 .font(.system(size: 13, weight: .bold))
                 .tracking(1.0)
                 .foregroundStyle(AppTheme.accent)
                 .padding(.top, 8)
+            functionList(items(for: selectedGame).filter { !isSkin($0) })
+        }
+    }
 
-            // Function List
-            if let game = selectedGame {
-                if items(for: game).isEmpty {
-                    HStack(spacing: 12) {
-                        Image(systemName: "slider.horizontal.3")
-                            .foregroundStyle(AppTheme.secondaryText)
-                        Text(busy ? "Checking for updates…" : "No functions yet. They will appear after an update.")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(AppTheme.primaryText)
-                        Spacer()
-                        if busy {
-                            ProgressView()
-                                .tint(AppTheme.accent)
-                        }
-                    }
-                    .padding(.vertical, 20)
-                } else {
-                    VStack(spacing: 12) {
-                        ForEach(items(for: game)) { item in
-                            functionRow(item)
-                        }
-                    }
-                }
+    private var skinPage: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            gameSelector
+            let skins = items(for: selectedGame).filter(isSkin)
+            if skins.isEmpty {
+                functionList([], empty: "No skins yet. They will appear after an update.")
             } else {
-                // Default to first game if none selected, or show prompt
-                if let firstGame = VitaGame.allCases.first {
-                    VStack(spacing: 12) {
-                        ForEach(items(for: firstGame)) { item in
-                            functionRow(item)
+                ForEach(skinSections(skins), id: \.title) { section in
+                    Text(section.title.uppercased())
+                        .font(.system(size: 13, weight: .bold))
+                        .tracking(1.0)
+                        .foregroundStyle(AppTheme.accent)
+                    LazyVGrid(
+                        columns: [
+                            GridItem(.flexible(), spacing: 12),
+                            GridItem(.flexible(), spacing: 12),
+                        ],
+                        spacing: 12
+                    ) {
+                        ForEach(section.items) { item in
+                            skinCard(item)
                         }
                     }
                 }
@@ -253,83 +159,92 @@ struct ContentView: View {
         }
     }
 
-    private func gameRow(_ game: VitaGame) -> some View {
-        Button {
-            selectedGame = game
-        } label: {
-            HStack(spacing: 14) {
-                GameIcon(game: game, size: 54)
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("PLAY")
-                        .font(.system(size: 10, weight: .semibold))
-                        .tracking(1.1)
-                        .foregroundStyle(AppTheme.tertiaryText)
-                    Text(game.title)
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(Color.white)
-                    Text(game.subtitle)
-                        .font(.system(size: 13))
-                        .foregroundStyle(AppTheme.secondaryText)
-                }
-
-                Spacer(minLength: 8)
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(AppTheme.tertiaryText)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
-            .background(
-                Color.white.opacity(0.06),
-                in: RoundedRectangle(cornerRadius: 28, style: .continuous)
+    private var banner: some View {
+        ZStack(alignment: .bottomLeading) {
+            VitaBannerVideo(isPlaying: tab == .home)
+                .frame(maxWidth: .infinity)
+                .frame(height: 180)
+            LinearGradient(
+                colors: [Color.black.opacity(0.05), Color.black.opacity(0.45)],
+                startPoint: .top,
+                endPoint: .bottom
             )
+            VStack {
+                HStack {
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(Color.white)
+                            .frame(width: 6, height: 6)
+                        Text("LIVE")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(Color.white)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.blue.opacity(0.8))
+                    .clipShape(Capsule())
+                    Spacer()
+                }
+                .padding(.top, 16)
+                .padding(.leading, 16)
+                Spacer()
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text("ROBOT EXTERNAL")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(Color.white)
+                Text("PLAY SMARTER")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.white.opacity(0.7))
+            }
+            .padding(.bottom, 20)
+            .padding(.leading, 16)
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel("\(game.title). \(game.subtitle)")
-        .accessibilityHint("Opens functions for this game")
+        .frame(height: 180)
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
 
-    private func gameFunctionsPage(_ game: VitaGame) -> some View {
-        VStack(alignment: .leading, spacing: 22) {
-            Button {
-                selectedGame = nil
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
+    private var gameSelector: some View {
+        HStack(spacing: 12) {
+            ForEach(VitaGame.allCases) { game in
+                Button {
+                    selectedGame = game
+                } label: {
                     Text(game.title)
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(selectedGame == game ? Color.white : AppTheme.secondaryText)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            Group {
+                                if selectedGame == game {
+                                    LinearGradient(
+                                        colors: [Color.blue, Color.blue.opacity(0.8)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                } else {
+                                    AppTheme.card
+                                }
+                            }
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
-                .foregroundStyle(Color.white)
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Back to Home")
+        }
+    }
 
-            HStack(alignment: .center, spacing: 16) {
-                GameIcon(game: game, size: 72)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(game.eyebrow)
-                        .font(.system(size: 11, weight: .semibold))
-                        .tracking(1.2)
-                        .foregroundStyle(AppTheme.tertiaryText)
-                    Text(game.title)
-                        .font(.system(size: 26, weight: .bold))
-                        .foregroundStyle(Color.white)
-                    Text("PLAY BEYOND LIMITS")
-                        .font(.system(size: 11, weight: .semibold))
-                        .tracking(1.4)
-                        .foregroundStyle(AppTheme.secondaryText)
-                }
-                Spacer(minLength: 0)
-            }
-
-            if items(for: game).isEmpty {
+    private func functionList(
+        _ rows: [PatchLibraryItem],
+        empty: String = "No functions yet. They will appear after an update."
+    ) -> some View {
+        Group {
+            if rows.isEmpty {
                 HStack(spacing: 12) {
                     Image(systemName: "slider.horizontal.3")
                         .foregroundStyle(AppTheme.secondaryText)
-                    Text(busy ? "Checking for updates…" : "No functions yet. They will appear after an update.")
+                    Text(busy ? "Checking for updates…" : empty)
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(AppTheme.primaryText)
                     Spacer()
@@ -338,10 +253,10 @@ struct ContentView: View {
                             .tint(AppTheme.accent)
                     }
                 }
-                .padding(.top, 8)
+                .padding(.vertical, 20)
             } else {
-                VStack(spacing: 6) {
-                    ForEach(items(for: game)) { item in
+                VStack(spacing: 12) {
+                    ForEach(rows) { item in
                         functionRow(item)
                     }
                 }
@@ -349,63 +264,22 @@ struct ContentView: View {
         }
     }
 
-    private var titleWordmark: some View {
-        VitaTitleWordmark(maxWidth: 188, alignment: .leading)
-    }
-
     private func functionRow(_ item: PatchLibraryItem) -> some View {
         let open = controller.isOpen(item)
         let waiting = pendingPatchID == item.id && pendingOpen != nil
-        let metadata = ContentFunctionMetadataStore.metadata(for: item.id)
         let name = BundledFunctionCatalog.displayName(for: item)
-        let description = metadata?.description.trimmingCharacters(
-            in: .whitespacesAndNewlines
-        ) ?? ""
-        let glyph = FunctionGlyph.symbol(icon: metadata?.icon, name: name)
 
         return HStack(spacing: 14) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(AppTheme.accent.opacity(0.15))
-                Image(systemName: glyph)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(AppTheme.accent)
-            }
-            .frame(width: 40, height: 40)
-            .accessibilityHidden(true)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(name)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.white)
-                if !description.isEmpty {
-                    Text(description)
-                        .font(.system(size: 12))
-                        .foregroundStyle(AppTheme.secondaryText)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                if waiting {
-                    Text("Preparing device…")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(AppTheme.accent)
-                }
-            }
-
+            Text(name)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(Color.white)
+                .lineLimit(1)
             Spacer(minLength: 8)
-
-            Toggle("", isOn: Binding(
-                get: { open },
-                set: { requestOpen($0, item: item) }
-            ))
-            .labelsHidden()
-            .tint(AppTheme.accent)
-            .disabled(
-                busy
-                    || item.project == nil
-                    || !appState.isSupported
-                    || appState.kernelExploitRunning
-                    || waiting
-            )
+            if waiting {
+                ProgressView()
+                    .tint(AppTheme.accent)
+            }
+            patchToggle(item, open: open, waiting: waiting)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
@@ -414,7 +288,97 @@ struct ContentView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(name)
         .accessibilityValue(open ? "Open" : "Closed")
-        .accessibilityHint(description)
+    }
+
+    private func skinCard(_ item: PatchLibraryItem) -> some View {
+        let open = controller.isOpen(item)
+        let waiting = pendingPatchID == item.id && pendingOpen != nil
+        let name = BundledFunctionCatalog.displayName(for: item)
+        let icon = ContentFunctionMetadataStore.metadata(for: item.id)?.icon
+
+        return VStack(spacing: 10) {
+            ZStack {
+                AppTheme.pageBackground
+                if let image = uploadedImage(icon) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .padding(8)
+                } else {
+                    Image(systemName: "person.fill")
+                        .font(.system(size: 28, weight: .semibold))
+                        .foregroundStyle(AppTheme.secondaryText)
+                }
+            }
+            .frame(height: 148)
+            .frame(maxWidth: .infinity)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            Text(name)
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(Color.white)
+                .lineLimit(1)
+            patchToggle(item, open: open, waiting: waiting)
+        }
+        .padding(12)
+        .background(AppTheme.card)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(name)
+        .accessibilityValue(open ? "Open" : "Closed")
+    }
+
+    private func patchToggle(_ item: PatchLibraryItem, open: Bool, waiting: Bool) -> some View {
+        Toggle("", isOn: Binding(
+            get: { open },
+            set: { requestOpen($0, item: item) }
+        ))
+        .labelsHidden()
+        .tint(AppTheme.accent)
+        .disabled(
+            busy
+                || item.project == nil
+                || !appState.isSupported
+                || appState.kernelExploitRunning
+                || waiting
+        )
+    }
+
+    private struct SkinSection {
+        let title: String
+        let items: [PatchLibraryItem]
+    }
+
+    private func skinSections(_ skins: [PatchLibraryItem]) -> [SkinSection] {
+        var order: [String] = []
+        var grouped: [String: [PatchLibraryItem]] = [:]
+        for item in skins {
+            let title = categoryName(for: item) ?? "Skin"
+            if grouped[title] == nil {
+                order.append(title)
+                grouped[title] = []
+            }
+            grouped[title, default: []].append(item)
+        }
+        return order.map { SkinSection(title: $0, items: grouped[$0] ?? []) }
+    }
+
+    private func categoryName(for item: PatchLibraryItem) -> String? {
+        let raw = ContentFunctionMetadataStore.metadata(for: item.id)?.description ?? ""
+        guard let split = raw.firstIndex(of: "|") else { return nil }
+        let name = raw[..<split].trimmingCharacters(in: .whitespacesAndNewlines)
+        return name.isEmpty ? nil : name
+    }
+
+    private func isSkin(_ item: PatchLibraryItem) -> Bool {
+        categoryName(for: item)?.localizedCaseInsensitiveContains("skin") == true
+    }
+
+    private func uploadedImage(_ icon: String?) -> UIImage? {
+        guard let icon, icon.hasPrefix("data:image"),
+              let comma = icon.firstIndex(of: ",") else { return nil }
+        let payload = String(icon[icon.index(after: comma)...])
+        guard let data = Data(base64Encoded: payload) else { return nil }
+        return UIImage(data: data)
     }
 
     private var profilePage: some View {
