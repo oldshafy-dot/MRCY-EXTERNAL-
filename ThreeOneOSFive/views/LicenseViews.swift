@@ -119,8 +119,12 @@ private struct AppLaunchLoadingView: View {
 }
 
 struct LicenseActivationView: View {
+    @Environment(\.openURL) private var openURL
     @EnvironmentObject private var session: LicenseSessionController
     @State private var licenseKey = ""
+    @State private var showNotice = true
+    @State private var noticeMessage = "Stay connected and get the latest updates, news, and announcements right on your bot!"
+    @State private var noticeURL = URL(string: "https://t.me/roboiosbot")!
 
     var body: some View {
         ZStack {
@@ -150,8 +154,23 @@ struct LicenseActivationView: View {
                 }
                 .scrollDismissesKeyboard(.interactively)
             }
+            if showNotice {
+                LoginNoticeCard(
+                    message: noticeMessage,
+                    onOpen: { openURL(noticeURL) },
+                    onClose: { showNotice = false }
+                )
+            }
         }
         .tint(AppTheme.accent)
+        .task {
+            if let notice = await session.loginNotice() {
+                noticeMessage = notice.message
+                noticeURL = notice.url
+            } else {
+                showNotice = false
+            }
+        }
     }
 
     private var header: some View {
@@ -232,6 +251,78 @@ struct LicenseActivationView: View {
             )
             .padding(.top, 10)
         }
+    }
+}
+
+private struct LoginNoticeCard: View {
+    let message: String
+    let onOpen: () -> Void
+    let onClose: () -> Void
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.72)
+                .ignoresSafeArea()
+                .onTapGesture(perform: onClose)
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
+                    Button(action: onClose) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(Color.white.opacity(0.72))
+                            .frame(width: 32, height: 32)
+                            .background(Color.white.opacity(0.08), in: Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Close")
+                }
+                Text("Open Bot")
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundStyle(Color.white)
+                    .frame(maxWidth: .infinity)
+                Text("for Daily Updates")
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(AppTheme.secondaryText)
+                    .padding(.top, 6)
+                Text(message)
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.white.opacity(0.88))
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 18)
+                Button(action: onOpen) {
+                    Text("Open Bot")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .background(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.20, green: 0.72, blue: 1.00),
+                                    Color(red: 0.10, green: 0.42, blue: 1.00)
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            in: Capsule()
+                        )
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 22)
+                .accessibilityLabel("Open Bot")
+            }
+            .padding(22)
+            .frame(maxWidth: 340)
+            .background(Color(white: 0.08), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+            )
+            .padding(.horizontal, 28)
+        }
+        .accessibilityElement(children: .contain)
     }
 }
 

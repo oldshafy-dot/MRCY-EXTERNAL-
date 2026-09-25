@@ -80,6 +80,42 @@ final class LicenseSessionController: ObservableObject {
         }
     }
 
+    func loginNotice() async -> (message: String, url: URL)? {
+        let fallbackMessage = "Stay connected and get the latest updates, news, and announcements right on your bot!"
+        guard let fallbackURL = URL(string: "https://t.me/roboiosbot") else { return nil }
+        for _ in 0..<40 where api == nil {
+            if case .loading = state {
+                try? await Task.sleep(nanoseconds: 100_000_000)
+                continue
+            }
+            break
+        }
+        guard let api, let notice = await api.loginNotice() else {
+            return (fallbackMessage, fallbackURL)
+        }
+        guard notice.enabled else { return nil }
+        let message = notice.message.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !message.isEmpty,
+              message.count <= 500,
+              let url = URL(string: notice.url),
+              Self.allowedBotURL(url) else {
+            return (fallbackMessage, fallbackURL)
+        }
+        return (message, url)
+    }
+
+    private static func allowedBotURL(_ url: URL) -> Bool {
+        guard url.scheme?.lowercased() == "https",
+              url.user == nil,
+              url.password == nil,
+              let host = url.host?.lowercased(),
+              host == "t.me" || host == "telegram.me" else {
+            return false
+        }
+        let path = url.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        return !path.isEmpty && path.count <= 80 && !path.contains("..")
+    }
+
     func beginActivation(licenseKey: String) async {
         guard !isWorking, let api else { return }
         let key = licenseKey.trimmingCharacters(in: .whitespacesAndNewlines)

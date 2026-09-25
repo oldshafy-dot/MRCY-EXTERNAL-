@@ -74,6 +74,12 @@ private final class LicenseRedirectDelegate: NSObject, URLSessionTaskDelegate {
     }
 }
 
+struct LoginNoticePayload: Decodable {
+    let enabled: Bool
+    let message: String
+    let url: String
+}
+
 final class AccessChannel {
     private struct ServerError: Decodable {
         let message: String?
@@ -91,6 +97,21 @@ final class AccessChannel {
     ) {
         self.configuration = configuration
         self.identity = identity
+    }
+
+    func loginNotice() async -> LoginNoticePayload? {
+        do {
+            var request = URLRequest(url: try endpoint(path: "v1/robo/notice"))
+            request.httpMethod = "GET"
+            request.timeoutInterval = 12
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+            let (data, response) = try await perform(request)
+            try validate(response: response, data: data)
+            guard data.count <= 4_096 else { return nil }
+            return try decoder.decode(LoginNoticePayload.self, from: data)
+        } catch {
+            return nil
+        }
     }
 
     func startActivation(_ request: ActivationStartRequest) async throws -> PendingActivation {
