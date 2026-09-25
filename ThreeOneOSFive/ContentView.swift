@@ -13,6 +13,9 @@ struct ContentView: View {
     @State private var selectedGame: VitaGame = .freeFire
     @State private var pendingPatchID: UUID?
     @State private var pendingOpen: Bool?
+    @State private var showNotice = true
+    @State private var noticeMessage = "Stay connected and get the latest updates, news, and announcements right on your bot!"
+    @State private var noticeURL = URL(string: "https://t.me/roboiosbot")!
 
     private var busy: Bool { store.isBusy || controller.isWorking }
     private var items: [PatchLibraryItem] { store.items }
@@ -48,6 +51,14 @@ struct ContentView: View {
                 .opacity(tab == .info ? 1 : 0)
                 .allowsHitTesting(tab == .info)
                 .accessibilityHidden(tab != .info)
+
+            if tab == .home && showNotice {
+                LoginNoticeCard(
+                    message: noticeMessage,
+                    onOpen: { openURL(noticeURL) },
+                    onClose: { showNotice = false }
+                )
+            }
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VitaLiquidTabBar(selection: $tab)
@@ -99,6 +110,14 @@ struct ContentView: View {
             Task { await contentUpdates.checkForUpdates(session: licenseSession, store: store) }
         }
         .task { await contentUpdates.checkForUpdates(session: licenseSession, store: store) }
+        .task {
+            if let notice = await licenseSession.loginNotice() {
+                noticeMessage = notice.message
+                noticeURL = notice.url
+            } else {
+                showNotice = false
+            }
+        }
     }
 
     private func pageScroll<Content: View>(_ content: Content) -> some View {

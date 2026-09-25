@@ -119,12 +119,8 @@ private struct AppLaunchLoadingView: View {
 }
 
 struct LicenseActivationView: View {
-    @Environment(\.openURL) private var openURL
     @EnvironmentObject private var session: LicenseSessionController
     @State private var licenseKey = ""
-    @State private var showNotice = true
-    @State private var noticeMessage = "Stay connected and get the latest updates, news, and announcements right on your bot!"
-    @State private var noticeURL = URL(string: "https://t.me/roboiosbot")!
 
     var body: some View {
         ZStack {
@@ -154,23 +150,8 @@ struct LicenseActivationView: View {
                 }
                 .scrollDismissesKeyboard(.interactively)
             }
-            if showNotice {
-                LoginNoticeCard(
-                    message: noticeMessage,
-                    onOpen: { openURL(noticeURL) },
-                    onClose: { showNotice = false }
-                )
-            }
         }
         .tint(AppTheme.accent)
-        .task {
-            if let notice = await session.loginNotice() {
-                noticeMessage = notice.message
-                noticeURL = notice.url
-            } else {
-                showNotice = false
-            }
-        }
     }
 
     private var header: some View {
@@ -254,7 +235,7 @@ struct LicenseActivationView: View {
     }
 }
 
-private struct LoginNoticeCard: View {
+struct LoginNoticeCard: View {
     let message: String
     let onOpen: () -> Void
     let onClose: () -> Void
