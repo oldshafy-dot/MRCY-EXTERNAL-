@@ -28,10 +28,13 @@ struct ContentFunctionMetadata: Codable, Equatable {
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
             .replacingOccurrences(of: "_", with: "-")
+        if raw.isEmpty || raw == "free-fire" || raw == "freefire" {
+            return "free-fire"
+        }
         if raw == "free-fire-max" || raw == "max" || raw == "freefiremax" {
             return "free-fire-max"
         }
-        return "free-fire"
+        return raw
     }
 }
 
@@ -82,10 +85,12 @@ final class ContentUpdateController: ObservableObject {
     @Published private(set) var isInstalling = false
     @Published var errorMessage: String?
     @Published private(set) var lastInstalledVersion: String?
+    @Published private(set) var games: [ContentGameDescriptor]
     @Published private(set) var hasVerifiedPolicy = false
     @Published private(set) var integrityCompromised = false
 
     private static let pendingRequiredKey = "vita.content.pending-required.v1"
+    private static let gamesKey = "robo.content.games.v1"
     private var lastCheckAt: Date?
 
     init() {
@@ -94,6 +99,13 @@ final class ContentUpdateController: ObservableObject {
                 ContentReleaseManifest.self,
                 from: data
             )
+        }
+        if let data = UserDefaults.standard.data(forKey: Self.gamesKey),
+           let saved = try? JSONDecoder().decode([ContentGameDescriptor].self, from: data),
+           !saved.isEmpty {
+            games = saved
+        } else {
+            games = ContentGameDescriptor.defaults
         }
     }
 
@@ -114,6 +126,9 @@ final class ContentUpdateController: ObservableObject {
                 setRequiredRelease(nil)
                 hasVerifiedPolicy = true
                 return
+            }
+            if let remoteGames = envelope.games, !remoteGames.isEmpty {
+                saveGames(remoteGames)
             }
             let manifest = try verify(
                 envelope: envelope,
@@ -150,6 +165,15 @@ final class ContentUpdateController: ObservableObject {
             hasVerifiedPolicy = false
             lastCheckAt = nil
             errorMessage = error.localizedDescription
+        }
+    }
+
+    private func saveGames(_ values: [ContentGameDescriptor]) {
+        let cleaned = values.filter { !$0.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !$0.bundleID.isEmpty }
+        guard !cleaned.isEmpty else { return }
+        games = cleaned
+        if let data = try? JSONEncoder().encode(cleaned) {
+            UserDefaults.standard.set(data, forKey: Self.gamesKey)
         }
     }
 

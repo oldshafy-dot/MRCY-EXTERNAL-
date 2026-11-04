@@ -3,15 +3,21 @@ import SwiftUI
 import UIKit
 
 enum AppTheme {
-    // New Design Palette based on uploaded image
-    static let accent = Color(red: 0.15, green: 0.55, blue: 1.00) // Bright Blue
-    static let pageBackground = Color(red: 0.03, green: 0.05, blue: 0.10) // Very Dark Blue/Black
-    static let consoleBackground = Color(red: 0.08, green: 0.10, blue: 0.15)
-    static let card = Color(red: 0.08, green: 0.11, blue: 0.18) // Dark Blue-Grey Card
-    static let cardSelected = Color(red: 0.15, green: 0.55, blue: 1.00) // Active Blue
+    // Red palette
+    static let accent = Color(red: 0.96, green: 0.20, blue: 0.19) // Bright Red
+    static let accentDeep = Color(red: 0.70, green: 0.05, blue: 0.09) // Deep Crimson
+    static let accentGradient = LinearGradient(
+        colors: [accent, accentDeep],
+        startPoint: .leading,
+        endPoint: .trailing
+    )
+    static let pageBackground = Color(red: 0.04, green: 0.03, blue: 0.03) // Near-Black with Red Tint
+    static let consoleBackground = Color(red: 0.09, green: 0.07, blue: 0.07)
+    static let card = Color(red: 0.11, green: 0.08, blue: 0.08) // Dark Red-Grey Card
+    static let cardSelected = Color(red: 0.96, green: 0.20, blue: 0.19) // Active Red
     static let primaryText = Color.white
-    static let secondaryText = Color(red: 0.60, green: 0.65, blue: 0.75)
-    static let tertiaryText = Color(red: 0.40, green: 0.45, blue: 0.55)
+    static let secondaryText = Color(red: 0.64, green: 0.60, blue: 0.60)
+    static let tertiaryText = Color(red: 0.44, green: 0.40, blue: 0.40)
     static let hairline = Color.white.opacity(0.05)
     
     static let pagePadding: CGFloat = 20
@@ -258,7 +264,39 @@ struct GameIcon: View {
     }
 }
 
-enum VitaTab: Int, CaseIterable, Hashable {
+struct ContentGameIcon: View {
+    let game: ContentGameDescriptor
+    var size: CGFloat = 52
+
+    private var uploadedImage: UIImage? {
+        guard game.icon.hasPrefix("data:image"),
+              let comma = game.icon.firstIndex(of: ",") else { return nil }
+        let payload = String(game.icon[game.icon.index(after: comma)...])
+        guard let data = Data(base64Encoded: payload) else { return nil }
+        return UIImage(data: data)
+    }
+
+    var body: some View {
+        Group {
+            if let uploadedImage {
+                Image(uiImage: uploadedImage)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Image(systemName: "gamecontroller.fill")
+                    .font(.system(size: size * 0.42, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(AppTheme.card)
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(RoundedRectangle(cornerRadius: size * 0.22, style: .continuous))
+        .accessibilityHidden(true)
+    }
+}
+
+
     case home
     case info
 

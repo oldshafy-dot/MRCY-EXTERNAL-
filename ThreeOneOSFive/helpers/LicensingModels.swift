@@ -219,10 +219,42 @@ struct ProofRequest: Encodable {
 struct SignedManifestEnvelope: Decodable {
     let manifestBase64: String
     let signature: String
+    let games: [ContentGameDescriptor]?
 
     private enum CodingKeys: String, CodingKey {
         case manifestBase64 = "manifest_base64"
         case signature
+        case games
+    }
+}
+
+struct ContentGameDescriptor: Codable, Identifiable, Equatable, Hashable {
+    let name: String
+    let bundleID: String
+    let icon: String
+
+    var id: String { bundleID }
+
+    var slug: String {
+        switch bundleID {
+        case "com.dts.freefireth": return "free-fire"
+        case "com.dts.freefiremax": return "free-fire-max"
+        default: return bundleID
+        }
+    }
+
+    static let defaults = [
+        ContentGameDescriptor(name: "Free Fire", bundleID: "com.dts.freefireth", icon: ""),
+        ContentGameDescriptor(name: "Free Fire MAX", bundleID: "com.dts.freefiremax", icon: ""),
+        ContentGameDescriptor(name: "Free Fire India", bundleID: "com.dts.freefireindia", icon: ""),
+        ContentGameDescriptor(name: "PUBG Mobile", bundleID: "com.tencent.ig", icon: ""),
+        ContentGameDescriptor(name: "PUBG Mobile India", bundleID: "com.pubg.imobile", icon: ""),
+    ]
+
+    private enum CodingKeys: String, CodingKey {
+        case name
+        case bundleID = "bundleId"
+        case icon
     }
 }
 

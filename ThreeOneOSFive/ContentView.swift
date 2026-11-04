@@ -10,7 +10,7 @@ struct ContentView: View {
     @Environment(\.openURL) private var openURL
     @StateObject private var controller = VitaPatchController()
     @State private var tab: VitaTab = .home
-    @State private var selectedGame: VitaGame = .freeFire
+    @State private var selectedGameID: String?
     @State private var pendingPatchID: UUID?
     @State private var pendingOpen: Bool?
     @State private var showNotice = true
@@ -20,7 +20,13 @@ struct ContentView: View {
     private var busy: Bool { store.isBusy || controller.isWorking }
     private var items: [PatchLibraryItem] { store.items }
 
-    private func items(for game: VitaGame) -> [PatchLibraryItem] {
+    private var availableGames: [ContentGameDescriptor] { contentUpdates.games }
+    private var selectedGame: ContentGameDescriptor? {
+        guard let selectedGameID else { return nil }
+        return availableGames.first(where: { $0.id == selectedGameID })
+    }
+
+    private func items(for game: ContentGameDescriptor) -> [PatchLibraryItem] {
         items
             .filter { item in
                 ContentFunctionMetadataStore.metadata(for: item.id)?.gameSlug ?? "free-fire"
@@ -133,15 +139,75 @@ struct ContentView: View {
     }
 
     private var homeGamesPage: some View {
+        Group {
+            if let selectedGame {
+                functionPage(for: selectedGame)
+            } else {
+                appPickerPage
+            }
+        }
+    }
+
+    private var appPickerPage: some View {
         VStack(alignment: .leading, spacing: 20) {
             banner
-            gameSelector
-            Text("FUNCTION")
-                .font(.system(size: 13, weight: .bold))
-                .tracking(1.0)
-                .foregroundStyle(AppTheme.accent)
-                .padding(.top, 8)
-            functionList(items(for: selectedGame))
+            VStack(alignment: .leading, spacing: 5) {
+                Text("SELECT APP")
+                    .font(.system(size: 13, weight: .bold))
+                    .tracking(1.0)
+                    .foregroundStyle(AppTheme.accent)
+                Text("Choose an app to view its functions")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(availableGames) { game in
+                    Button {
+                        selectedGameID = game.id
+                    } label: {
+                        VStack(alignment: .leading, spacing: 12) {
+                            ContentGameIcon(game: game, size: 58)
+                            Text(game.name)
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
+                            Text(game.bundleID)
+                                .font(.system(size: 10, weight: .regular, design: .monospaced))
+                                .foregroundStyle(AppTheme.secondaryText)
+                                .lineLimit(1)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(14)
+                        .background(AppTheme.card)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+
+    private func functionPage(for game: ContentGameDescriptor) -> some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(spacing: 12) {
+                ContentGameIcon(game: game, size: 48)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(game.name)
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.white)
+                    Text("FUNCTIONS")
+                        .font(.system(size: 11, weight: .bold))
+                        .tracking(1.0)
+                        .foregroundStyle(AppTheme.accent)
+                }
+                Spacer()
+                Button("Change") { selectedGameID = nil }
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AppTheme.accent)
+            }
+            banner
+            functionList(items(for: game))
         }
     }
 
@@ -153,36 +219,6 @@ struct ContentView: View {
             .accessibilityLabel("ROBO banner")
     }
 
-    private var gameSelector: some View {
-        HStack(spacing: 12) {
-            ForEach(VitaGame.allCases) { game in
-                Button {
-                    selectedGame = game
-                } label: {
-                    Text(game.title)
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(selectedGame == game ? Color.white : AppTheme.secondaryText)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(
-                            Group {
-                                if selectedGame == game {
-                                    LinearGradient(
-                                        colors: [Color.blue, Color.blue.opacity(0.8)],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                } else {
-                                    AppTheme.card
-                                }
-                            }
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                }
-                .buttonStyle(.plain)
-            }
-        }
-    }
 
     private func functionList(
         _ rows: [PatchLibraryItem],
