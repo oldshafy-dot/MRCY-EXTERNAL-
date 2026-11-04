@@ -149,42 +149,49 @@ struct ContentView: View {
     }
 
     private var appPickerPage: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 0) {
             banner
-            VStack(alignment: .leading, spacing: 5) {
-                Text("SELECT APP")
-                    .font(.system(size: 13, weight: .bold))
-                    .tracking(1.0)
-                    .foregroundStyle(AppTheme.accent)
-                Text("Choose an app to view its functions")
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundStyle(.white)
-            }
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                .padding(.bottom, 14)
+            VStack(spacing: 0) {
                 ForEach(availableGames) { game in
                     Button {
                         selectedGameID = game.id
                     } label: {
-                        VStack(alignment: .leading, spacing: 12) {
-                            ContentGameIcon(game: game, size: 58)
-                            Text(game.name)
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundStyle(.white)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.leading)
-                            Text(game.bundleID)
-                                .font(.system(size: 10, weight: .regular, design: .monospaced))
+                        HStack(spacing: 14) {
+                            ContentGameIcon(game: game, size: 52)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(game.name)
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundStyle(.white)
+                                    .lineLimit(1)
+                                Text(gameSubtitle(for: game))
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundStyle(AppTheme.secondaryText)
+                                    .lineLimit(1)
+                            }
+                            Spacer(minLength: 8)
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 15, weight: .bold))
                                 .foregroundStyle(AppTheme.secondaryText)
-                                .lineLimit(1)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(14)
-                        .background(AppTheme.card)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .padding(.vertical, 14)
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    if game.id != availableGames.last?.id {
+                        Divider()
+                            .overlay(AppTheme.hairline)
+                    }
                 }
             }
+        }
+    }
+
+    private func gameSubtitle(for game: ContentGameDescriptor) -> String {
+        switch game.slug {
+        case "free-fire": return "Normal"
+        case "free-fire-max": return "MAX"
+        default: return "Ready"
         }
     }
 
