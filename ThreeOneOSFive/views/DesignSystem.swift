@@ -296,7 +296,7 @@ struct ContentGameIcon: View {
     }
 }
 
-
+enum VitaTab: Int, CaseIterable, Hashable {
     case home
     case info
 
