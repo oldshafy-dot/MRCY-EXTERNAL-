@@ -210,14 +210,7 @@ struct LicenseActivationView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
                 .background(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 0.20, green: 0.72, blue: 1.00),
-                            Color(red: 0.10, green: 0.42, blue: 1.00)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
+                    AppTheme.accentGradient,
                     in: Capsule()
                 )
             }
@@ -279,14 +272,7 @@ struct LoginNoticeCard: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                         .background(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 0.20, green: 0.72, blue: 1.00),
-                                    Color(red: 0.10, green: 0.42, blue: 1.00)
-                                ],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
+                            AppTheme.accentGradient,
                             in: Capsule()
                         )
                 }
