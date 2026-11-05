@@ -190,53 +190,6 @@ struct LicenseActivationView: View {
             .frame(height: 56)
             .background(Color.white.opacity(0.06), in: Capsule())
 
-            VStack(spacing: 10) {
-                Link(destination: URL(string: "https://t.me/robomods")!) {
-                    HStack(spacing: 10) {
-                        Text("Don’t have a license? DM")
-                            .font(.system(size: 14, weight: .semibold))
-                        Image(systemName: "paperplane.fill")
-                            .font(.system(size: 15, weight: .semibold))
-                    }
-                    .foregroundStyle(Color.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)
-                    .background(
-                        Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72),
-                        in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                    )
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Don't have a license? DM on Telegram")
-
-                Link(destination: URL(string: "https://t.me/shafaycheatsff")!) {
-                    HStack(spacing: 10) {
-                        Text("Shafay Dev")
-                            .font(.system(size: 14, weight: .semibold))
-                        Image(systemName: "message.fill")
-                            .font(.system(size: 15, weight: .semibold))
-                    }
-                    .foregroundStyle(Color.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)
-                    .background(
-                        Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72),
-                        in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                    )
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Shafay Dev on Telegram")
-            }
-            .padding(.top, 2)
-
             Button {
                 Task {
                     await session.beginActivation(licenseKey: licenseKey)
@@ -273,6 +226,42 @@ struct LicenseActivationView: View {
                     : 1
             )
             .padding(.top, 10)
+
+            VStack(spacing: 10) {
+                Link(destination: URL(string: "https://t.me/roboios")!) {
+                    HStack(spacing: 10) {
+                        Text("ROBO OFFICIAL")
+                            .font(.system(size: 14, weight: .semibold))
+                        Image(systemName: "paperplane.fill")
+                            .font(.system(size: 15, weight: .semibold))
+                    }
+                    .foregroundStyle(Color.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("ROBO OFFICIAL on Telegram")
+
+                Link(destination: URL(string: "https://t.me/shafaycheatsff")!) {
+                    HStack(spacing: 10) {
+                        Text("Shafay Dev")
+                            .font(.system(size: 14, weight: .semibold))
+                        Image(systemName: "message.fill")
+                            .font(.system(size: 15, weight: .semibold))
+                    }
+                    .foregroundStyle(Color.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Shafay Dev on Telegram")
+            }
+            .padding(.top, 18)
+
         }
     }
 }
