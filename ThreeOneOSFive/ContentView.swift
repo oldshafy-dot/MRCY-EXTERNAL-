@@ -257,12 +257,25 @@ struct ContentView: View {
         let open = controller.isOpen(item)
         let waiting = pendingPatchID == item.id && pendingOpen != nil
         let name = BundledFunctionCatalog.displayName(for: item)
+        let rawDescription = ContentFunctionMetadataStore.metadata(for: item.id)?.description ?? ""
+        let description = rawDescription.contains("|")
+            ? String(rawDescription.split(separator: "|", maxSplits: 1).dropFirst().first ?? "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            : rawDescription.trimmingCharacters(in: .whitespacesAndNewlines)
 
         return HStack(spacing: 14) {
-            Text(name)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(Color.white)
-                .lineLimit(1)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(name)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Color.white)
+                    .lineLimit(1)
+                if !description.isEmpty {
+                    Text(description)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(AppTheme.secondaryText)
+                        .lineLimit(1)
+                }
+            }
             Spacer(minLength: 8)
             if waiting {
                 ProgressView()
