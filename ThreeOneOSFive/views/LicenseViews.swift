@@ -255,7 +255,6 @@ struct LicenseActivationView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
                     .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: Capsule())
-                    .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Shafay Dev on Telegram")
