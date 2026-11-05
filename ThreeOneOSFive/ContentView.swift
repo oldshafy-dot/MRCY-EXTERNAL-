@@ -98,7 +98,6 @@ struct ContentView: View {
             }
             controller.refresh(items: items)
             restoreLeftoverPatchesIfNeeded()
-            scheduleBackgroundMusic(true)
         }
         .onDisappear {
             VitaBackgroundMusic.setPlaying(false)
@@ -111,7 +110,6 @@ struct ContentView: View {
         }
         .onChange(of: appState.exploitStatus) { handlePreparationChange($0) }
         .onChange(of: scenePhase) { phase in
-            scheduleBackgroundMusic(phase == .active)
             guard phase == .active else { return }
             Task { await contentUpdates.checkForUpdates(session: licenseSession, store: store) }
         }
@@ -591,16 +589,6 @@ struct ContentView: View {
             items: items,
             canAccessFiles: canAccessPatchedFiles
         )
-    }
-
-    private func scheduleBackgroundMusic(_ playing: Bool) {
-        if !playing || ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 17 {
-            VitaBackgroundMusic.setPlaying(playing)
-            return
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            VitaBackgroundMusic.setPlaying(true)
-        }
     }
 
     private func requestOpen(_ open: Bool, item: PatchLibraryItem) {
