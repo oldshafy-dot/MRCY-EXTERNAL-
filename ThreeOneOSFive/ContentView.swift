@@ -46,6 +46,7 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             AppTheme.pageBackground.ignoresSafeArea()
+            FallingStarsBackground()
 
             pageScroll(homeGamesPage)
                 .opacity(tab == .home ? 1 : 0)
@@ -431,6 +432,19 @@ struct ContentView: View {
                     icon: "square.stack.3d.up.fill",
                     title: "Version",
                     value: appVersion
+                )
+            }
+
+            profileSection("Contact") {
+                VitaProfileRow(
+                    icon: "paperplane.fill",
+                    title: "ROBO Mods",
+                    value: "@robomods"
+                )
+                VitaProfileRow(
+                    icon: "person.fill",
+                    title: "Shafay Dev",
+                    value: "@shafaycheatsff"
                 )
             }
 
