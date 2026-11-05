@@ -120,6 +120,7 @@ private struct AppLaunchLoadingView: View {
 }
 
 struct LicenseActivationView: View {
+    @State private var countdownNow = Date()
     @EnvironmentObject private var session: LicenseSessionController
     @State private var licenseKey = ""
 
@@ -132,6 +133,8 @@ struct LicenseActivationView: View {
                     VStack(spacing: 0) {
                         Spacer(minLength: 36)
                         header
+                        licenseExpiryBanner
+                            .padding(.top, 18)
                         form
                             .padding(.top, 36)
                         if let error = session.errorMessage {
@@ -156,6 +159,38 @@ struct LicenseActivationView: View {
         .tint(AppTheme.accent)
     }
 
+    private var licenseExpiryBanner: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("LICENSE EXPIRY").font(.system(size: 10, weight: .bold)).tracking(1.2).foregroundStyle(AppTheme.secondaryText)
+            if let expiry = parsedExpiryDate, expiry > countdownNow {
+                Text(remainingText(until: expiry)).font(.system(size: 16, weight: .semibold, design: .rounded)).foregroundStyle(Color.white)
+                Text("Expires: \(expiry.formatted(date: .abbreviated, time: .shortened))").font(.system(size: 12, weight: .medium)).foregroundStyle(AppTheme.secondaryText)
+            } else {
+                Text("License expiry will appear after activation").font(.system(size: 13, weight: .medium)).foregroundStyle(Color.white)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 18).padding(.vertical, 14)
+        .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { value in countdownNow = value }
+    }
+
+    private var parsedExpiryDate: Date? {
+        guard let text = session.profile?.expiryText, !text.isEmpty else { return nil }
+        let formats = ["yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", "yyyy-MM-dd'T'HH:mm:ssXXXXX", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "MMM d, yyyy h:mm a", "MMM d, yyyy"]
+        for format in formats {
+            let formatter = DateFormatter(); formatter.locale = Locale(identifier: "en_US_POSIX"); formatter.dateFormat = format
+            if let date = formatter.date(from: text) { return date }
+        }
+        return ISO8601DateFormatter().date(from: text)
+    }
+
+    private func remainingText(until expiry: Date) -> String {
+        let total = max(0, Int(expiry.timeIntervalSince(countdownNow)))
+        let days = total / 86400; let hours = (total % 86400) / 3600; let minutes = (total % 3600) / 60; let seconds = total % 60
+        return "\(days) days, \(hours) hours, \(minutes) minutes and \(seconds) seconds left"
+    }
     private var header: some View {
         (Text("ROBO ") + Text("iOS").foregroundColor(AppTheme.accent))
             .font(.system(size: 36, weight: .bold))
@@ -238,7 +273,7 @@ struct LicenseActivationView: View {
                     .foregroundStyle(Color.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
-                    .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: Capsule())
                     .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
                 }
                 .buttonStyle(.plain)
