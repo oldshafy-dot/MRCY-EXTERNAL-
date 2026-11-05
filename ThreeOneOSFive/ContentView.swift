@@ -475,12 +475,12 @@ struct ContentView: View {
                 VitaProfileRow(
                     icon: "paperplane.fill",
                     title: "ROBO Mods",
-                    value: "https://t.me/robomods"
+                    value: "@roboios"
                 )
                 VitaProfileRow(
                     icon: "person.fill",
                     title: "Shafay Dev",
-                    value: "https://t.me/shafaycheatsff"
+                    value: "@shafaycheatsff"
                 )
             }
 
