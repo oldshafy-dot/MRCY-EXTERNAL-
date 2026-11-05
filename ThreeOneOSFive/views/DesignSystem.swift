@@ -11,9 +11,9 @@ enum AppTheme {
         startPoint: .leading,
         endPoint: .trailing
     )
-    static let pageBackground = Color(red: 0.04, green: 0.03, blue: 0.03) // Near-Black with Red Tint
-    static let consoleBackground = Color(red: 0.09, green: 0.07, blue: 0.07)
-    static let card = Color(red: 0.11, green: 0.08, blue: 0.08) // Dark Red-Grey Card
+    static let pageBackground = Color.black
+    static let consoleBackground = Color.white.opacity(0.055)
+    static let card = Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.62) // Transparent dark-grey cards
     static let cardSelected = Color(red: 0.96, green: 0.20, blue: 0.19) // Active Red
     static let primaryText = Color.white
     static let secondaryText = Color(red: 0.64, green: 0.60, blue: 0.60)
@@ -35,6 +35,48 @@ enum AppTheme {
     static let contentCardCornerRadius: CGFloat = 16
     static let contentCardInset: CGFloat = 16
     static let contentCardPadding: CGFloat = 16
+}
+
+
+struct FallingStarsBackground: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+            Canvas { context, size in
+                let time = reduceMotion ? 0 : timeline.date.timeIntervalSinceReferenceDate
+                let count = 70
+
+                for index in 0..<count {
+                    let seed = Double(index)
+                    let x = pseudoRandom(seed * 13.17) * size.width
+                    let speed = 18.0 + pseudoRandom(seed * 7.31) * 38.0
+                    let start = pseudoRandom(seed * 5.41) * (size.height + 220.0)
+                    let y = (start + time * speed).truncatingRemainder(dividingBy: size.height + 220.0) - 110.0
+                    let length = 2.0 + pseudoRandom(seed * 9.27) * 5.0
+                    let radius = 0.7 + pseudoRandom(seed * 3.83) * 1.3
+                    let opacity = 0.28 + pseudoRandom(seed * 11.19) * 0.52
+
+                    var path = Path()
+                    path.move(to: CGPoint(x: x, y: y))
+                    path.addLine(to: CGPoint(x: x - 1.2, y: y - length))
+                    context.stroke(path, with: .color(.white.opacity(opacity * 0.55)), lineWidth: 0.7)
+                    context.fill(
+                        Path(ellipseIn: CGRect(x: x - radius, y: y - radius, width: radius * 2, height: radius * 2)),
+                        with: .color(.white.opacity(opacity))
+                    )
+                }
+            }
+            .allowsHitTesting(false)
+        }
+        .ignoresSafeArea()
+        .accessibilityHidden(true)
+    }
+
+    private func pseudoRandom(_ value: Double) -> Double {
+        let raw = sin(value * 12.9898) * 43758.5453
+        return raw - floor(raw)
+    }
 }
 
 struct AppCardBorder: View {
