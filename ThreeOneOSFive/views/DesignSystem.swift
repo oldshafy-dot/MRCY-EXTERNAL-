@@ -569,17 +569,24 @@ final class VitaBannerPlayerView: UIView {
 
     func load() {
         guard player == nil,
-              let url = Bundle.main.url(forResource: "robo-banner", withExtension: "mp4") else {
+              let url = Bundle.main.url(forResource: "banner", withExtension: "mov") else {
             backgroundColor = .black
             return
         }
+
         let item = AVPlayerItem(url: url)
         item.preferredForwardBufferDuration = 1
+
         let queue = AVQueuePlayer(items: [])
         queue.automaticallyWaitsToMinimizeStalling = false
         queue.actionAtItemEnd = .none
-        queue.isMuted = true
-        queue.volume = 0
+        queue.isMuted = false
+        queue.volume = 1.0
+
+        let session = AVAudioSession.sharedInstance()
+        try? session.setCategory(.playback, mode: .moviePlayback, options: [.mixWithOthers])
+        try? session.setActive(true)
+
         looper = AVPlayerLooper(player: queue, templateItem: item)
         player = queue
         playerLayerView.player = queue
@@ -590,13 +597,13 @@ final class VitaBannerPlayerView: UIView {
     func setPlaying(_ playing: Bool) {
         guard wantsPlayback != playing else { return }
         wantsPlayback = playing
+
         if playing {
             playerLayerView.player = player
-            player?.isMuted = true
-            player?.volume = 0
+            player?.isMuted = false
+            player?.volume = 1.0
             player?.play()
         } else {
-            player?.isMuted = true
             player?.pause()
         }
     }
@@ -605,34 +612,5 @@ final class VitaBannerPlayerView: UIView {
         player?.pause()
         player = nil
         looper = nil
-    }
-}
-
-enum VitaBackgroundMusic {
-    private static var player: AVAudioPlayer?
-
-    static func setPlaying(_ playing: Bool) {
-        if player == nil { load() }
-        if playing {
-            activateAudioSession()
-            player?.numberOfLoops = -1
-            player?.play()
-        } else {
-            player?.pause()
-        }
-    }
-
-    private static func load() {
-        guard let url = Bundle.main.url(forResource: "song", withExtension: "mp3"),
-              let audio = try? AVAudioPlayer(contentsOf: url) else { return }
-        audio.numberOfLoops = -1
-        audio.prepareToPlay()
-        player = audio
-    }
-
-    private static func activateAudioSession() {
-        let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
-        try? session.setActive(true)
     }
 }
