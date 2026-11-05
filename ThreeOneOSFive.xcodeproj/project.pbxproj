@@ -91,8 +91,7 @@
 		A17A00000000000000000019 /* LicenseViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17A00000000000000000018; };
 		A17A0000000000000000001b /* RuntimeGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17A0000000000000000001a; };
 		A17A0000000000000000001d /* DeviceHWID.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17A0000000000000000001c; };
-		VTVID02 /* robo-banner.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = VTVID01; };
-		VTSNG02 /* song.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = VTSNG01; };
+		VTVID04 /* banner.mov in Resources */ = {isa = PBXBuildFile; fileRef = VTVID03; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -107,8 +106,7 @@
 		3105A029 /* bad_query.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bad_query.c; sourceTree = "<group>"; };
 		3105A030 /* mcm_bridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mcm_bridge.m; sourceTree = "<group>"; };
 		3105A031 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		VTVID01 /* robo-banner.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "robo-banner.mp4"; sourceTree = "<group>"; };
-		VTSNG01 /* song.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = song.mp3; sourceTree = "<group>"; };
+		VTVID03 /* banner.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "banner.mov"; sourceTree = "<group>"; };
 		3105A040 /* bad_query.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bad_query.h; sourceTree = "<group>"; };
 		3105A041 /* mcm_bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mcm_bridge.h; sourceTree = "<group>"; };
 		3105A050 /* ThreeOneOSFive-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ThreeOneOSFive-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -235,8 +233,7 @@
 				3105A406 /* kexploit */,
 				3105A120 /* Localizable.strings */,
 				3105A031 /* Assets.xcassets */,
-				VTVID01 /* robo-banner.mp4 */,
-				VTSNG01 /* song.mp3 */,
+				VTVID03 /* banner.mov */,
 			);
 			path = ThreeOneOSFive;
 			sourceTree = "<group>";
@@ -429,8 +426,7 @@
 			files = (
 				3105A211,
 				3105A228,
-				VTVID02,
-				VTSNG02,
+				VTVID04,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
