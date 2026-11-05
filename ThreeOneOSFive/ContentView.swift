@@ -436,12 +436,12 @@ struct ContentView: View {
                 VitaProfileRow(
                     icon: "paperplane.fill",
                     title: "ROBO Mods",
-                    value: "@robomods"
+                    value: "https://t.me/robomods"
                 )
                 VitaProfileRow(
                     icon: "person.fill",
                     title: "Shafay Dev",
-                    value: "@shafaycheatsff"
+                    value: "https://t.me/shafaycheatsff"
                 )
             }
 
@@ -582,7 +582,7 @@ struct ContentView: View {
     private var appVersion: String {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
-        return "\(version) (\(build))"
+        return version
     }
 
     private var canAccessPatchedFiles: Bool {
