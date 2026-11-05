@@ -100,9 +100,6 @@ struct ContentView: View {
             controller.refresh(items: items)
             restoreLeftoverPatchesIfNeeded()
         }
-        .onDisappear {
-            VitaBackgroundMusic.setPlaying(false)
-        }
         .onChange(of: store.isBusy) { value in
             if !value {
                 controller.refresh(items: items)
