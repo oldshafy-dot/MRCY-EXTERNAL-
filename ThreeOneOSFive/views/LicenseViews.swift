@@ -94,6 +94,7 @@ private struct AppLaunchLoadingView: View {
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
+            FallingStarsBackground()
             VStack(spacing: 0) {
                 Text("ROBO EXTERNAL")
                     .font(.system(size: 22, weight: .bold))
@@ -125,6 +126,7 @@ struct LicenseActivationView: View {
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
+            FallingStarsBackground()
             GeometryReader { geometry in
                 ScrollView {
                     VStack(spacing: 0) {
@@ -187,6 +189,18 @@ struct LicenseActivationView: View {
             .padding(.horizontal, 18)
             .frame(height: 56)
             .background(Color.white.opacity(0.06), in: Capsule())
+
+            VStack(spacing: 4) {
+                Text("Don’t have a license? DM @robomods")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(AppTheme.secondaryText)
+                Text("Shafay Dev @shafaycheatsff")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(AppTheme.accent)
+            }
+            .frame(maxWidth: .infinity)
+            .multilineTextAlignment(.center)
+            .padding(.top, 2)
 
             Button {
                 Task {
@@ -282,7 +296,7 @@ struct LoginNoticeCard: View {
             }
             .padding(22)
             .frame(maxWidth: 340)
-            .background(Color(white: 0.08), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
                     .stroke(Color.white.opacity(0.08), lineWidth: 1)
@@ -395,6 +409,7 @@ struct RequiredContentUpdateView: View {
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
+            FallingStarsBackground()
             GeometryReader { geometry in
                 ScrollView {
                     VStack(spacing: 36) {
