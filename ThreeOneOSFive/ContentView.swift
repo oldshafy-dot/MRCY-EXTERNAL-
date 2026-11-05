@@ -215,7 +215,7 @@ struct ContentView: View {
     }
 
     private var banner: some View {
-        VitaBannerVideo(isPlaying: tab == .home)
+        VitaBannerVideo(isPlaying: true)
             .frame(maxWidth: .infinity)
             .frame(height: 180)
             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
