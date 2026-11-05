@@ -190,13 +190,30 @@ struct LicenseActivationView: View {
             .frame(height: 56)
             .background(Color.white.opacity(0.06), in: Capsule())
 
-            VStack(spacing: 4) {
-                Text("Don’t have a license? DM @robomods")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(AppTheme.secondaryText)
-                Text("Shafay Dev @shafaycheatsff")
-                    .font(.system(size: 12, weight: .semibold))
+            VStack(spacing: 8) {
+                Link(destination: URL(string: "https://t.me/robomods")!) {
+                    HStack(spacing: 7) {
+                        Text("Don’t have a license? DM")
+                            .font(.system(size: 13, weight: .medium))
+                        Image(systemName: "paperplane.fill")
+                            .font(.system(size: 12, weight: .semibold))
+                        Text("@robomods")
+                            .font(.system(size: 13, weight: .semibold))
+                    }
                     .foregroundStyle(AppTheme.accent)
+                }
+
+                Link(destination: URL(string: "https://t.me/shafaycheatsff")!) {
+                    HStack(spacing: 7) {
+                        Text("Shafay Dev")
+                            .font(.system(size: 12, weight: .semibold))
+                        Image(systemName: "arrow.up.right")
+                            .font(.system(size: 11, weight: .bold))
+                        Text("@shafaycheatsff")
+                            .font(.system(size: 12, weight: .semibold))
+                    }
+                    .foregroundStyle(AppTheme.accent)
+                }
             }
             .frame(maxWidth: .infinity)
             .multilineTextAlignment(.center)
