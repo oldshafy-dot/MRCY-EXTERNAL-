@@ -57,10 +57,6 @@ struct FallingStarsBackground: View {
                     let radius = 0.7 + pseudoRandom(seed * 3.83) * 1.3
                     let opacity = 0.28 + pseudoRandom(seed * 11.19) * 0.52
 
-                    var path = Path()
-                    path.move(to: CGPoint(x: x, y: y))
-                    path.addLine(to: CGPoint(x: x - 1.2, y: y - length))
-                    context.stroke(path, with: .color(.white.opacity(opacity * 0.55)), lineWidth: 0.7)
                     context.fill(
                         Path(ellipseIn: CGRect(x: x - radius, y: y - radius, width: radius * 2, height: radius * 2)),
                         with: .color(.white.opacity(opacity))
