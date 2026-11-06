@@ -187,7 +187,7 @@ struct AppLogo: View {
                 ?? UIImage(named: "AppIcon60x60") {
                 Image(uiImage: icon)
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
             } else {
                 Image(systemName: "bolt.fill")
                     .font(.title2.weight(.semibold))
@@ -628,7 +628,7 @@ final class VitaBannerPlayerView: UIView {
         looper = AVPlayerLooper(player: queue, templateItem: item)
         player = queue
         playerLayerView.player = queue
-        playerLayerView.videoGravity = .resizeAspectFill
+        playerLayerView.videoGravity = .resizeAspect
         backgroundColor = .black
     }
 
