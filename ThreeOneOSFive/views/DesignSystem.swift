@@ -607,7 +607,7 @@ final class VitaBannerPlayerView: UIView {
 
     func load() {
         guard player == nil,
-              let url = Bundle.main.url(forResource: "banner", withExtension: "mov") else {
+              let url = Bundle.main.url(forResource: "banner", withExtension: "mp4") else {
             backgroundColor = .black
             return
         }
