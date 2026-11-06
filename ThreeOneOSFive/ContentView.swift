@@ -46,6 +46,11 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
+            Image("AppBackground")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .overlay(Color.black.opacity(0.28).ignoresSafeArea())
             AppTheme.pageBackground.ignoresSafeArea()
             FallingStarsBackground()
 
@@ -76,7 +81,7 @@ struct ContentView: View {
         .tint(AppTheme.accent)
         .preferredColorScheme(.dark)
         .alert(
-            "ROBO iOS",
+            "MRCY iOS External",
             isPresented: Binding(
                 get: { controller.message != nil },
                 set: { if !$0 { controller.message = nil } }
@@ -220,7 +225,7 @@ struct ContentView: View {
             .frame(maxWidth: .infinity)
             .frame(height: 180)
             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .accessibilityLabel("ROBO banner")
+            .accessibilityLabel("MRCY banner")
     }
 
 
@@ -426,7 +431,7 @@ struct ContentView: View {
             HStack(spacing: 14) {
                 AppLogo(size: 52)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("ROBO iOS")
+                    Text("MRCY iOS External")
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(Color.white)
                     Text("Play Beyond Limits")
@@ -475,7 +480,7 @@ struct ContentView: View {
                 VitaProfileRow(
                     icon: "info.circle.fill",
                     title: "Name",
-                    value: "ROBO iOS"
+                    value: "MRCY iOS External"
                 )
                 VitaProfileRow(
                     icon: "square.stack.3d.up.fill",
@@ -539,7 +544,7 @@ struct ContentView: View {
             HStack(spacing: 14) {
                 AppLogo(size: 52)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("ROBO iOS")
+                    Text("MRCY iOS External")
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(Color.white)
                     Text("PLAY BEYOND LIMITS")
