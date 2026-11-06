@@ -48,7 +48,9 @@ struct ContentView: View {
         ZStack {
             Image("AppBackground")
                 .resizable()
-                .scaledToFill()
+                .scaledToFit()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
                 .ignoresSafeArea()
                 .overlay(Color.black.opacity(0.28).ignoresSafeArea())
             AppTheme.pageBackground.ignoresSafeArea()
