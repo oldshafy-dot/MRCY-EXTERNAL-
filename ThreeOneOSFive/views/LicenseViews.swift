@@ -93,10 +93,14 @@ private struct ContentPolicyVerificationView: View {
 private struct AppLaunchLoadingView: View {
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Image("AppBackground")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .overlay(Color.black.opacity(0.32).ignoresSafeArea())
             FallingStarsBackground()
             VStack(spacing: 0) {
-                Text("ROBO EXTERNAL")
+                Text("MRCY iOS External")
                     .font(.system(size: 22, weight: .bold))
                     .foregroundStyle(Color.white)
                     .frame(maxWidth: .infinity)
@@ -125,7 +129,11 @@ struct LicenseActivationView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Image("AppBackground")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .overlay(Color.black.opacity(0.32).ignoresSafeArea())
             FallingStarsBackground()
             GeometryReader { geometry in
                 ScrollView {
@@ -157,11 +165,11 @@ struct LicenseActivationView: View {
     }
 
     private var header: some View {
-        (Text("ROBO ") + Text("iOS").foregroundColor(AppTheme.accent))
+        (Text("MRCY ") + Text("iOS").foregroundColor(AppTheme.accent))
             .font(.system(size: 36, weight: .bold))
             .foregroundStyle(Color.white)
             .frame(maxWidth: .infinity)
-            .accessibilityLabel("ROBO iOS")
+            .accessibilityLabel("MRCY iOS External")
     }
 
     private var form: some View {
@@ -230,7 +238,7 @@ struct LicenseActivationView: View {
             VStack(spacing: 10) {
                 Link(destination: URL(string: "https://t.me/roboios")!) {
                     HStack(spacing: 10) {
-                        Text("ROBO OFFICIAL")
+                        Text("MERCY OFFICIAL")
                             .font(.system(size: 14, weight: .semibold))
                         Image(systemName: "paperplane.fill")
                             .font(.system(size: 15, weight: .semibold))
@@ -242,7 +250,7 @@ struct LicenseActivationView: View {
                     
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("ROBO OFFICIAL on Telegram")
+                .accessibilityLabel("MERCY OFFICIAL on Telegram")
 
                 Link(destination: URL(string: "https://t.me/shafaycheatsff")!) {
                     HStack(spacing: 10) {
@@ -431,13 +439,17 @@ struct RequiredContentUpdateView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Image("AppBackground")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .overlay(Color.black.opacity(0.32).ignoresSafeArea())
             FallingStarsBackground()
             GeometryReader { geometry in
                 ScrollView {
                     VStack(spacing: 36) {
                         Spacer(minLength: 48)
-                        Text("ROBO EXTERNAL")
+                        Text("MRCY iOS External")
                             .font(.system(size: 22, weight: .bold))
                             .foregroundStyle(Color.white)
                         releaseNotes
