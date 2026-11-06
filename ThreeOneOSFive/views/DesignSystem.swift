@@ -3,22 +3,22 @@ import SwiftUI
 import UIKit
 
 enum AppTheme {
-    // Red palette
-    static let accent = Color(red: 0.96, green: 0.20, blue: 0.19) // Bright Red
-    static let accentDeep = Color(red: 0.70, green: 0.05, blue: 0.09) // Deep Crimson
+    // Dark shiny purple palette
+    static let accent = Color(red: 0.60, green: 0.16, blue: 0.95) // Shiny Purple
+    static let accentDeep = Color(red: 0.24, green: 0.03, blue: 0.45) // Deep Purple
     static let accentGradient = LinearGradient(
         colors: [accent, accentDeep],
         startPoint: .leading,
         endPoint: .trailing
     )
-    static let pageBackground = Color.black
+    static let pageBackground = Color.black.opacity(0.22)
     static let consoleBackground = Color.white.opacity(0.055)
-    static let card = Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.62) // Transparent dark-grey cards
-    static let cardSelected = Color(red: 0.96, green: 0.20, blue: 0.19) // Active Red
+    static let card = Color(red: 0.04, green: 0.01, blue: 0.08).opacity(0.46) // Transparent dark-purple glass
+    static let cardSelected = accent // Active Purple
     static let primaryText = Color.white
-    static let secondaryText = Color(red: 0.64, green: 0.60, blue: 0.60)
-    static let tertiaryText = Color(red: 0.44, green: 0.40, blue: 0.40)
-    static let hairline = Color.white.opacity(0.05)
+    static let secondaryText = Color(red: 0.72, green: 0.66, blue: 0.78)
+    static let tertiaryText = Color(red: 0.52, green: 0.45, blue: 0.60)
+    static let hairline = Color.purple.opacity(0.16)
     
     static let pagePadding: CGFloat = 20
     static let sectionSpacing: CGFloat = 24
@@ -162,10 +162,10 @@ struct VitaTitleWordmark: View {
                     .scaledToFit()
             } else {
                 VStack(spacing: 8) {
-                    (Text("ROBO ") + Text("iOS").foregroundColor(AppTheme.accent))
+                    (Text("MRCY ") + Text("iOS").foregroundColor(AppTheme.accent))
                         .font(.system(size: 28, weight: .heavy))
                         .foregroundStyle(Color.white)
-                    Text("DEV EV SHAFAYAY")
+                    Text("MRCY iOS External")
                         .font(.system(size: 10, weight: .semibold))
                         .tracking(1.6)
                         .foregroundStyle(AppTheme.secondaryText)
@@ -173,7 +173,7 @@ struct VitaTitleWordmark: View {
             }
         }
         .frame(maxWidth: maxWidth, alignment: alignment)
-        .accessibilityLabel("ROBO iOS. Play beyond limits.")
+        .accessibilityLabel("MRCY iOS External")
     }
 }
 
