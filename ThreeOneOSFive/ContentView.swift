@@ -492,11 +492,18 @@ struct ContentView: View {
             }
 
             profileSection("Contact") {
-                VitaProfileRow(
-                    icon: "paperplane.fill",
-                    title: "MRCY Official",
-                    value: "@roboios"
-                )
+                Button {
+                    if let destination = URL(string: "https://chat.whatsapp.com/EGPInvSmpt7KzD5xXTpe7U?s=cl&p=i&mlu=4&ilr=4&iam=2") {
+                        openURL(destination)
+                    }
+                } label: {
+                    VitaProfileRow(
+                        icon: "paperplane.fill",
+                        title: "MRCY Official",
+                        value: "WhatsApp"
+                    )
+                }
+                .buttonStyle(.plain)
                 VitaProfileRow(
                     icon: "person.fill",
                     title: "Shafay Dev",
