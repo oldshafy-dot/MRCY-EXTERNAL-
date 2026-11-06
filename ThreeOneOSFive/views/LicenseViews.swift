@@ -238,7 +238,7 @@ struct LicenseActivationView: View {
             .padding(.top, 10)
 
             VStack(spacing: 10) {
-                Link(destination: URL(string: "https://t.me/roboios")!) {
+                Link(destination: URL(string: "https://chat.whatsapp.com/EGPInvSmpt7KzD5xXTpe7U?s=cl&p=i&mlu=4&ilr=4&iam=2")!) {
                     HStack(spacing: 10) {
                         Text("MRCY OFFICIAL")
                             .font(.system(size: 14, weight: .semibold))
