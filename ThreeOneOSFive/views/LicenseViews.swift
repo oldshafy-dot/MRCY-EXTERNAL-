@@ -238,7 +238,7 @@ struct LicenseActivationView: View {
             VStack(spacing: 10) {
                 Link(destination: URL(string: "https://t.me/roboios")!) {
                     HStack(spacing: 10) {
-                        Text("MERCY OFFICIAL")
+                        Text("MRCY OFFICIAL")
                             .font(.system(size: 14, weight: .semibold))
                         Image(systemName: "paperplane.fill")
                             .font(.system(size: 15, weight: .semibold))
@@ -250,7 +250,7 @@ struct LicenseActivationView: View {
                     
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("MERCY OFFICIAL on Telegram")
+                .accessibilityLabel("MRCY OFFICIAL on Telegram")
 
                 Link(destination: URL(string: "https://t.me/shafaycheatsff")!) {
                     HStack(spacing: 10) {
